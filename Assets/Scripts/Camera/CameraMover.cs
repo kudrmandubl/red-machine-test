@@ -45,15 +45,10 @@ namespace Camera
                 return;
             }
 
-            float sign = -1;
-            if (Application.isEditor)
-            {
-                sign = 1;
-            }
-            Vector3 tragetPosition = _cameraTransform.position + deltaDrag * sign * _moveSpeed;
-            tragetPosition.x = Mathf.Clamp(tragetPosition.x, _minPosition.x, _maxPosition.x);
-            tragetPosition.y = Mathf.Clamp(tragetPosition.y, _minPosition.y, _maxPosition.y);
-            _cameraTransform.position = tragetPosition;
+            Vector3 targetPosition = _cameraTransform.position + deltaDrag;
+            targetPosition.x = Mathf.Clamp(targetPosition.x, _minPosition.x, _maxPosition.x);
+            targetPosition.y = Mathf.Clamp(targetPosition.y, _minPosition.y, _maxPosition.y);
+            _cameraTransform.position = Vector3.Lerp(_cameraTransform.position, targetPosition, Time.deltaTime * _moveSpeed);
         }
 
         private void SetMoveImpossible(EventModels.Game.NodeTapped data)

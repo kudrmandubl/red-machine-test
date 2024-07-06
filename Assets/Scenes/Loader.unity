@@ -424,7 +424,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activityType: 1
-  _moveSpeed: 0.8
+  _moveSpeed: 22
+  _extraBorder: {x: 1, y: 1, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
