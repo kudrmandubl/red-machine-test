@@ -27,20 +27,22 @@ namespace Player.ActionHandlers
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if ((Application.isEditor && Input.GetMouseButtonDown(0))
+                || (!Application.isEditor && Input.touchCount > 0))
             {
                 _isClick = true;
                 _clickHoldDuration = .0f;
 
-                _pointerDownPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                _pointerDownPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
                 
                 PointerDownEvent?.Invoke(_pointerDownPosition);
                 
                 _pointerDownPosition = new Vector3(_pointerDownPosition.x, _pointerDownPosition.y, .0f);
             }
-            else if (Input.GetMouseButtonUp(0))
+            else if ((Application.isEditor && Input.GetMouseButtonUp(0))
+                || (!Application.isEditor && (_isClick || _isDrag) && Input.touchCount == 0))
             {
-                var pointerUpPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                var pointerUpPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
                     
                 if (_isDrag)
                 {
@@ -60,7 +62,7 @@ namespace Player.ActionHandlers
 
             if (_isDrag)
             {
-                var pointerPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                var pointerPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
                 Vector3 deltaDrag = _pointerLastDragPosition - pointerPosition;
                 deltaDrag.z = 0;
                 _pointerLastDragPosition = pointerPosition;
@@ -109,6 +111,15 @@ namespace Player.ActionHandlers
         public void ClearDragEvents()
         {
             DragEvent = null;
+        }
+
+        private Vector3 GetPointerPosition()
+        {
+            if(Application.isEditor || (!Application.isEditor && Input.touchCount == 0))
+            {
+                return Input.mousePosition;
+            }
+            return Input.touches[0].position;
         }
     }
 }
