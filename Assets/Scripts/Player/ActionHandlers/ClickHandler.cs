@@ -86,6 +86,15 @@ namespace Player.ActionHandlers
             }
         }
 
+        private Vector3 GetPointerPosition()
+        {
+            if (Application.isEditor || (!Application.isEditor && Input.touchCount == 0))
+            {
+                return Input.mousePosition;
+            }
+            return Input.touches[0].position;
+        }
+
         public void SetDragEventHandlers(Action<Vector3> dragStartEvent, Action<Vector3> dragEndEvent)
         {
             ClearEvents();
@@ -111,15 +120,6 @@ namespace Player.ActionHandlers
         public void ClearDragEvents()
         {
             DragEvent = null;
-        }
-
-        private Vector3 GetPointerPosition()
-        {
-            if(Application.isEditor || (!Application.isEditor && Input.touchCount == 0))
-            {
-                return Input.mousePosition;
-            }
-            return Input.touches[0].position;
         }
     }
 }

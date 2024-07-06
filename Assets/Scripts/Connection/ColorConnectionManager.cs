@@ -4,7 +4,7 @@ using Events;
 using Player;
 using Player.ActionHandlers;
 using UnityEngine;
-
+using System;
 
 namespace Connection
 {
@@ -25,6 +25,7 @@ namespace Connection
         private ColorNode _currentConnectionMainNode;
         private ColorConnector _currentColorConnector;
 
+        public static Action<ColorNode[]> OnNodesInited;
 
         private void Awake()
         {
@@ -36,6 +37,7 @@ namespace Connection
                 nodeTarget.TargetCompletionChangeEvent += OnTargetCompletionChange;
                 _completionsByTargetNode[nodeTarget] = nodeTarget.IsCompleted;
             }
+            OnNodesInited?.Invoke(_nodes);
 
             _clickHandler = ClickHandler.Instance;
             _clickHandler.SetDragEventHandlers(OnDragStart, OnDragEnd);
