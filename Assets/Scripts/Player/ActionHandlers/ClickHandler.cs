@@ -14,9 +14,11 @@ namespace Player.ActionHandlers
         public event Action<Vector3> ClickEvent;
         public event Action<Vector3> PointerUpEvent;
         public event Action<Vector3> DragStartEvent;
+        public event Action<Vector3> DragEvent;
         public event Action<Vector3> DragEndEvent;
 
         private Vector3 _pointerDownPosition;
+        private Vector3 _pointerLastDragPosition;
 
         private bool _isClick;
         private bool _isDrag;
@@ -55,6 +57,15 @@ namespace Player.ActionHandlers
 
                 _isClick = false;
             }
+
+            if (_isDrag)
+            {
+                var pointerPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 deltaDrag = _pointerLastDragPosition - pointerPosition;
+                deltaDrag.z = 0;
+                _pointerLastDragPosition = pointerPosition;
+                DragEvent?.Invoke(deltaDrag);
+            }
         }
 
         private void LateUpdate()
@@ -67,6 +78,7 @@ namespace Player.ActionHandlers
             {
                 DragStartEvent?.Invoke(_pointerDownPosition);
 
+                _pointerLastDragPosition = _pointerDownPosition;
                 _isClick = false;
                 _isDrag = true;
             }
@@ -80,10 +92,23 @@ namespace Player.ActionHandlers
             DragEndEvent = dragEndEvent;
         }
 
+        public void SetDragEventHandlers(Action<Vector3> dragEvent)
+        {
+            ClearDragEvents();
+
+            DragEvent = dragEvent;
+        }
+
+
         public void ClearEvents()
         {
             DragStartEvent = null;
             DragEndEvent = null;
+        }
+
+        public void ClearDragEvents()
+        {
+            DragEvent = null;
         }
     }
 }
