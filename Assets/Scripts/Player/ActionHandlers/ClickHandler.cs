@@ -27,22 +27,20 @@ namespace Player.ActionHandlers
 
         private void Update()
         {
-            if ((Application.isEditor && Input.GetMouseButtonDown(0))
-                || (!Application.isEditor && Input.touchCount > 0))
+            if (Input.GetMouseButtonDown(0))
             {
                 _isClick = true;
                 _clickHoldDuration = .0f;
 
-                _pointerDownPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
+                _pointerDownPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
                 
                 PointerDownEvent?.Invoke(_pointerDownPosition);
                 
                 _pointerDownPosition = new Vector3(_pointerDownPosition.x, _pointerDownPosition.y, .0f);
             }
-            else if ((Application.isEditor && Input.GetMouseButtonUp(0))
-                || (!Application.isEditor && (_isClick || _isDrag) && Input.touchCount == 0))
+            else if (Input.GetMouseButtonUp(0))
             {
-                var pointerUpPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
+                var pointerUpPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
                     
                 if (_isDrag)
                 {
@@ -62,7 +60,7 @@ namespace Player.ActionHandlers
 
             if (_isDrag)
             {
-                var pointerPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(GetPointerPosition());
+                var pointerPosition = CameraHolder.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3 deltaDrag = _pointerLastDragPosition - pointerPosition;
                 deltaDrag.z = 0;
                 _pointerLastDragPosition = pointerPosition;
@@ -84,15 +82,6 @@ namespace Player.ActionHandlers
                 _isClick = false;
                 _isDrag = true;
             }
-        }
-
-        private Vector3 GetPointerPosition()
-        {
-            if (Application.isEditor || (!Application.isEditor && Input.touchCount == 0))
-            {
-                return Input.mousePosition;
-            }
-            return Input.touches[0].position;
         }
 
         public void SetDragEventHandlers(Action<Vector3> dragStartEvent, Action<Vector3> dragEndEvent)
